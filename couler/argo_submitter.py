@@ -16,7 +16,7 @@ import re
 import tempfile
 
 import pyaml
-import yaml
+import ruamel.yaml
 from kubernetes import client as k8s_client
 from kubernetes import config
 
@@ -152,7 +152,7 @@ class ArgoSubmitter(object):
 
     def _create_workflow(self, workflow_yaml):
         yaml_str = pyaml.dump(workflow_yaml)
-        workflow_yaml = yaml.safe_load(yaml_str)
+        workflow_yaml = ruamel.yaml.safe_load(yaml_str)
         logging.info("Submitting workflow to Argo")
         try:
             response = self._custom_object_api_client.create_namespaced_custom_object(  # noqa: E501
@@ -175,7 +175,7 @@ class ArgoSubmitter(object):
 
     def _create_secret(self, secret_yaml):
         yaml_str = pyaml.dump(secret_yaml)
-        secret_yaml = yaml.safe_load(yaml_str)
+        secret_yaml = ruamel.yaml.safe_load(yaml_str)
         return self._core_api_client.create_namespaced_secret(  # noqa: E501
             self.namespace, secret_yaml
         )
