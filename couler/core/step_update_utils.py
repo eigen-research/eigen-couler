@@ -18,7 +18,7 @@ from couler.core import states, utils
 from couler.core.templates import OutputArtifact, Step
 
 
-def update_step(func_name, args, step_name, caller_line):
+def update_step(func_name, args, step_name, caller_line, reset_upstream_task=True):
     if states.workflow.dag_mode_enabled():
         step_name = _update_dag_tasks(
             func_name,
@@ -28,7 +28,8 @@ def update_step(func_name, args, step_name, caller_line):
             args,
             step_name=step_name,
         )
-        states._upstream_dag_task = [step_name]
+        if reset_upstream_task:
+            states._upstream_dag_task = [step_name]
     else:
         if states._run_concurrent_lock:
             step_name = _update_steps(
@@ -44,13 +45,13 @@ def update_step(func_name, args, step_name, caller_line):
 
 
 def _update_dag_tasks(
-    function_name,
-    caller_line,
-    dependencies,
-    depends_logic,
-    args=None,
-    template_name=None,
-    step_name=None,
+        function_name,
+        caller_line,
+        dependencies,
+        depends_logic,
+        args=None,
+        template_name=None,
+        step_name=None,
 ):
     """
     A task in DAG of Argo YAML contains name, related template and parameters.

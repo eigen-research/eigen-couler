@@ -216,6 +216,7 @@ def run_container(
     node_selector=None,
     cache=None,
     parallelism=None,
+    reset_upstream_task=True,
 ):
     """
     Generate an Argo container template.  For example, the template whalesay
@@ -319,7 +320,7 @@ def run_container(
         states.workflow.add_template(template)
 
     step_name = step_update_utils.update_step(
-        func_name, args, step_name, caller_line
+        func_name, args, step_name, caller_line, reset_upstream_task=reset_upstream_task
     )
 
     # TODO: need to switch to use field `output` directly

@@ -19,6 +19,8 @@ import pyaml
 import ruamel.yaml
 from kubernetes import client as k8s_client
 from kubernetes import config
+import warnings
+from ruamel.yaml.error import ReusedAnchorWarning
 
 from couler.core.constants import CronWorkflowCRD, WorkflowCRD
 
@@ -152,6 +154,7 @@ class ArgoSubmitter(object):
 
     def _create_workflow(self, workflow_yaml):
         yaml_str = pyaml.dump(workflow_yaml)
+        warnings.simplefilter("ignore", ReusedAnchorWarning)
         workflow_yaml = ruamel.yaml.safe_load(yaml_str)
         logging.info("Submitting workflow to Argo")
         try:
