@@ -217,6 +217,7 @@ def run_container(
     cache=None,
     parallelism=None,
     reset_upstream_task=True,
+    pre_existing_secrets_list=None
 ):
     """
     Generate an Argo container template.  For example, the template whalesay
@@ -316,6 +317,7 @@ def run_container(
             node_selector=node_selector,
             cache=cache,
             parallelism=parallelism,
+            pre_existing_secrets_list=pre_existing_secrets_list,
         )
         states.workflow.add_template(template)
 

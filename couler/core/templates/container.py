@@ -47,6 +47,7 @@ class Container(Template):
         volumes=None,
         cache=None,
         parallelism=None,
+        pre_existing_secrets_list=None
     ):
         Template.__init__(
             self,
@@ -73,6 +74,7 @@ class Container(Template):
         self.working_dir = working_dir
         self.node_selector = node_selector
         self.volumes = volumes
+        self.pre_existing_secrets_list = pre_existing_secrets_list
 
     def get_volume_mounts(self):
         return self.volume_mounts
@@ -170,6 +172,16 @@ class Container(Template):
                 container["env"] = self.secret.to_env_list()
             else:
                 container["env"].extend(self.secret.to_env_list())
+        if self.pre_existing_secrets_list is not None:
+            if not isinstance(self.pre_existing_secrets_list, list):
+                raise ValueError(
+                    "Expected a list"
+                )
+            if self.env is None:
+                container["env"] = self.pre_existing_secrets_list
+            else:
+                container["env"].extend(self.pre_existing_secrets_list)
+
         if self.env_from is not None:
             container["envFrom"] = self.env_from
         if self.resources is not None:
