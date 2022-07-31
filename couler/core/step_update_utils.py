@@ -107,6 +107,8 @@ def _update_dag_tasks(
                 task_template["dependencies"] = [dependencies]
         if depends_logic is not None:
             task_template["depends"] = depends_logic
+    if with_items is not None:
+        task_template['withItems'] = with_items
 
     t_name = function_name if template_name is None else template_name
     step = Step(name=function_id, template=t_name, with_items=with_items)
