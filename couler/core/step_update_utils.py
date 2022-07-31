@@ -18,7 +18,7 @@ from couler.core import states, utils
 from couler.core.templates import OutputArtifact, Step
 
 
-def update_step(func_name, args, step_name, caller_line, reset_upstream_task=True):
+def update_step(func_name, args, step_name, caller_line, reset_upstream_task=True, with_items=None):
     if states.workflow.dag_mode_enabled():
         step_name = _update_dag_tasks(
             func_name,
@@ -27,6 +27,7 @@ def update_step(func_name, args, step_name, caller_line, reset_upstream_task=Tru
             states._upstream_dag_depends_logic,
             args,
             step_name=step_name,
+            with_items=with_items,
         )
         if reset_upstream_task:
             states._upstream_dag_task = [step_name]
@@ -52,6 +53,7 @@ def _update_dag_tasks(
         args=None,
         template_name=None,
         step_name=None,
+        with_items=None
 ):
     """
     A task in DAG of Argo YAML contains name, related template and parameters.
@@ -107,7 +109,7 @@ def _update_dag_tasks(
             task_template["depends"] = depends_logic
 
     t_name = function_name if template_name is None else template_name
-    step = Step(name=function_id, template=t_name)
+    step = Step(name=function_id, template=t_name, with_items=with_items)
     if states._exit_handler_enable:
         if states._when_prefix is not None:
             step.when = states._when_prefix
